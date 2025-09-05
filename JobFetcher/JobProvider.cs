@@ -71,7 +71,7 @@ namespace JobFetcherManager
             catch (Exception ex)
             {
                 Console.WriteLine($"Deserialization error: {ex.Message}");
-                Console.WriteLine(decoded.Length > 500 ? decoded.Substring(0, 500) + "..." : decoded); 
+                Console.WriteLine(decoded.Length > 500 ? decoded.Substring(0, 500) + "..." : decoded);
                 return new List<JobListing>();
             }
         }
@@ -112,6 +112,61 @@ namespace JobFetcherManager
                 if (jobs.Count > 0)
                 {
                     ApiUsageTracker.Increment("remotive", "searchjobs");
+                }
+
+                return jobs;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Deserialization error: {ex.Message}");
+                return new List<JobListing>();
+            }
+        }
+    }
+
+    public class JoobleProvider : IJobProvider
+    {
+        private readonly HttpClient _httpClient = new HttpClient();
+        private const string ApiKey = "05a24876-e42b-4c9f-9119-5873321333e7";
+        private const string Endpoint = $"https://jooble.org/api/{ApiKey}";
+
+        public async Task<List<JobListing>> GetJobsAsync(int pageNumber = 1)
+        {
+            var requestBody = new
+            {
+                keywords = "apprentice",
+                location = "Leeds",
+                radius = "40", // optional: in km
+                page = pageNumber.ToString(),
+                companysearch = "false"
+            };
+
+            var response = await _httpClient.PostAsJsonAsync(Endpoint, requestBody);
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"\nTried to fetch Jooble jobs, error: {response.StatusCode}");
+                return new List<JobListing>();
+            }
+
+            try
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var parsed = JsonSerializer.Deserialize<JoobleResponse>(json);
+
+                var jobs = parsed?.Jobs?.Select(job => new JobListing
+                {
+                    Title = job.Title,
+                    Company = job.Company ?? "Unknown",
+                    Location = job.Location ?? "Unknown",
+                    Description = job.Snippet,
+                    Url = job.Link,
+                    PostedDate = job.Updated,
+                    Source = "Jooble"
+                }).ToList() ?? new List<JobListing>();
+
+                if (jobs.Count > 0)
+                {
+                    ApiUsageTracker.Increment("jooble", "searchjobs");
                 }
 
                 return jobs;
