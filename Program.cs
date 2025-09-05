@@ -1,5 +1,4 @@
 ﻿using JobFetcherManager;
-using JobListingManager;
 using Menus;
 
 class Program
