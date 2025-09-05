@@ -1,0 +1,51 @@
+# Build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.code-workspace
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+
+# Logs and usage tracking
+ApiUsage/ApiUsage.json
+
+# Configuration and secrets
+appsettings*.json
+*.env
+
+# NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Rider and JetBrains
+*.DotSettings
+*.DotSettings.user
+
+# Visual Studio for Mac
+*.pidb
+*.userprefs
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Temporary files
+*.tmp
+*.bak
