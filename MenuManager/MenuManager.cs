@@ -48,7 +48,7 @@ namespace Menus
             foreach (var job in jobs)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"🔹 {job.Title} at {job.Company} ({job.Location})");
+                Console.WriteLine($"🔹 {job.Title} at {job.Company} ({job.Location}) [{job.Source}]");
                 Console.WriteLine($"📅 Posted: {job.PostedDate.ToShortDateString()}");
                 Console.WriteLine($"🔗 Apply: {job.Url}");
                 Console.WriteLine(new string('-', 40));

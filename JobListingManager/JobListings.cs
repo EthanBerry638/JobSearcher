@@ -8,5 +8,6 @@ namespace JobListingManager
         public string? Description { get; set; }
         public string? Url { get; set; }
         public DateTime PostedDate { get; set; }
+        public string? Source { get; set; }
     }
 }

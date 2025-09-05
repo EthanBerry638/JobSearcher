@@ -57,7 +57,8 @@ namespace JobFetcherManager
                     Location = job.Location?.DisplayName ?? "Unknown",
                     Description = job.Description,
                     Url = job.RedirectUrl,
-                    PostedDate = DateTime.TryParse(job.Created, out var date) ? date : DateTime.MinValue
+                    PostedDate = DateTime.TryParse(job.Created, out var date) ? date : DateTime.MinValue,
+                    Source = "Adzuna"
                 }).ToList() ?? new List<JobListing>();
 
                 if (jobs.Count > 0)
@@ -104,7 +105,8 @@ namespace JobFetcherManager
                     Location = job.CandidateRequiredLocation ?? "Unknown",
                     Description = job.Description,
                     Url = job.Url,
-                    PostedDate = DateTime.TryParse(job.PublicationDate, out var date) ? date : DateTime.MinValue
+                    PostedDate = DateTime.TryParse(job.PublicationDate, out var date) ? date : DateTime.MinValue,
+                    Source = "Remotive"
                 }).ToList() ?? new List<JobListing>();
 
                 return jobs;
