@@ -39,7 +39,7 @@ namespace ApiUsage
             {
                 Console.WriteLine("📂 Usage file not found. Starting fresh.");
                 return new();
-            }
+            } 
 
             try
             {
