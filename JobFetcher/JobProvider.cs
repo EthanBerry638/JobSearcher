@@ -179,7 +179,7 @@ namespace JobFetcherManager
                     Console.ResetColor();
                     return new List<JobListing>();
                 }
-
+ 
                 Console.WriteLine($"✅ Filtered {jobs.Count} → {filteredJobs.Count} relevant jobs from Jooble");
 
                 return filteredJobs;
