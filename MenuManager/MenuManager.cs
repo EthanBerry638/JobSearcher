@@ -6,11 +6,11 @@ namespace Menus
 {
     public class MenuManager
     {
-        private readonly IJobProvider _provider;
+        private readonly List<IJobProvider> _providers;
 
-        public MenuManager(IJobProvider provider)
+        public MenuManager(List<IJobProvider> providers)
         {
-            _provider = provider;
+            _providers = providers;
         }
 
         public async Task LoopAsync()
@@ -19,17 +19,27 @@ namespace Menus
             Console.WriteLine("Fetching jobs...\n");
             Helper.Pause(1000);
 
-            for (int page = 1; page < 2; page++)
+            int maxPages = 10;
+
+            foreach (var provider in _providers)
             {
-                var jobs = await _provider.GetJobsAsync(page);
-                var filteredJobs = Helper.ApplyFilter(jobs);
+                int pageNumber = 1;
 
-                DisplayJobs(filteredJobs);
+                while (pageNumber <= maxPages)
+                {
 
-                await Task.Delay(2000);
+                    var jobs = await provider.GetJobsAsync(pageNumber);
+                    if (jobs == null || jobs.Count == 0)
+                        break;
+
+                    var filteredJobs = Helper.ApplyFilter(jobs);
+                    DisplayJobs(filteredJobs);
+
+                    pageNumber++;
+                    await Task.Delay(2000);
+                }
             }
         }
-
         private void DisplayJobs(List<JobListing> jobs)
         {
             if (jobs == null || jobs.Count == 0)

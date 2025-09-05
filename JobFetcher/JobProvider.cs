@@ -15,7 +15,7 @@ namespace JobFetcherManager
         private readonly HttpClient _httpClient = new HttpClient();
         private const string AppId = "8e952900";
         private const string AppKey = "a8531e4972606137d931f6222e1a4392";
-        private const int ResultsPerPage = 20;
+        private const int ResultsPerPage = 50;
 
         public async Task<List<JobListing>> GetJobsAsync(int pageNumber = 1)
         {
@@ -90,7 +90,7 @@ namespace JobFetcherManager
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Tried to fetch remotive jobs, error: {response.StatusCode}");
+                Console.WriteLine($"\nTried to fetch remotive jobs, error: {response.StatusCode}");
                 return new List<JobListing>();
             }
 

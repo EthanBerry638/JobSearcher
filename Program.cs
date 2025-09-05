@@ -1,6 +1,5 @@
 ﻿using JobFetcherManager;
 using Menus;
-using Providers;
 
 class Program
 {
@@ -10,9 +9,14 @@ class Program
 
         var adzuna = new AdzunaJobProvider();
         var remotive = new RemotiveJobProvider();
-        var provider = new MultiJobProvider(adzuna, remotive);
 
-        var menu = new MenuManager(provider);
+        var providers = new List<IJobProvider>
+        {
+            adzuna,
+            remotive
+        };
+
+        var menu = new MenuManager(providers);
         await menu.LoopAsync();
     }
 }
