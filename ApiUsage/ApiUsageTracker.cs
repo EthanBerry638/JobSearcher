@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using Helpers;
+using System.Globalization;
 
 namespace ApiUsage
 {
@@ -28,8 +29,8 @@ namespace ApiUsage
             usage[today][provider][endpoint]++;
             Console.WriteLine($"\n✅ Usage tracked: {provider} → {endpoint} on {today}");
             SaveUsage(usage);
-            int count = GetTodayCount("adzuna");
-            Console.WriteLine($"\n📅 Requests made today to Adzuna: {count}");
+            int count = GetTodayCount(provider);
+            Console.WriteLine($"\n📅 Requests made today to {CultureInfo.CurrentCulture.TextInfo.ToTitleCase(provider)}: {count}");
             Helper.Pause(1000);
         }
 
@@ -39,7 +40,7 @@ namespace ApiUsage
             {
                 Console.WriteLine("📂 Usage file not found. Starting fresh.");
                 return new();
-            } 
+            }
 
             try
             {

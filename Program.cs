@@ -9,11 +9,13 @@ class Program
 
         var adzuna = new AdzunaJobProvider();
         var remotive = new RemotiveJobProvider();
+        var jooble = new JoobleProvider();
 
         var providers = new List<IJobProvider>
         {
             adzuna,
-            remotive
+            remotive,
+            jooble
         };
 
         var menu = new MenuManager(providers);

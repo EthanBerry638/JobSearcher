@@ -134,9 +134,9 @@ namespace JobFetcherManager
         {
             var requestBody = new
             {
-                keywords = "apprentice",
-                location = "Leeds",
-                radius = "40", // optional: in km
+                keywords = "apprenticeship UK",
+                location = "Leeds, United Kingdom",
+                radius = "20", //km 
                 page = pageNumber.ToString(),
                 companysearch = "false"
             };
