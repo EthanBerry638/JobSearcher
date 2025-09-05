@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using JobListingManager;
 using ApiUsage;
+using Helpers;
 
 namespace JobFetcherManager
 {
@@ -134,8 +135,8 @@ namespace JobFetcherManager
         {
             var requestBody = new
             {
-                keywords = "apprenticeship UK",
-                location = "Leeds, United Kingdom",
+                keywords = "c# .net apprenticeship leeds",
+                location = "Leeds, England",
                 radius = "20", //km 
                 page = pageNumber.ToString(),
                 companysearch = "false"
@@ -169,7 +170,19 @@ namespace JobFetcherManager
                     ApiUsageTracker.Increment("jooble", "searchjobs");
                 }
 
-                return jobs;
+                var filteredJobs = jobs.Where(job => Helper.IsRelevant(job.Title!, job.Description!)).ToList();
+
+                if (filteredJobs.Count == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("\n⚠️ No relevant jobs found from Jooble.");
+                    Console.ResetColor();
+                    return new List<JobListing>();
+                }
+
+                Console.WriteLine($"✅ Filtered {jobs.Count} → {filteredJobs.Count} relevant jobs from Jooble");
+
+                return filteredJobs;
             }
             catch (Exception ex)
             {

@@ -15,6 +15,13 @@ namespace Helpers
                     !job.Location!.ToLowerInvariant().Contains("remote"))
                 .ToList();
         }
+        public static bool IsRelevant(string title, string description)
+        {
+            var keywords = new[] { "apprentice", "junior", "trainee", "graduate", "entry level" };
+            var techTerms = new[] { "software", "developer", "engineer", "c#", ".net"};
 
+            string content = (title + " " + description).ToLowerInvariant();
+            return keywords.Any(k => content.Contains(k)) && techTerms.Any(t => content.Contains(t));
+        }
     }
 }

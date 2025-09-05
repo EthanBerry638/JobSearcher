@@ -27,7 +27,6 @@ namespace Menus
 
                 while (pageNumber <= maxPages)
                 {
-
                     var jobs = await provider.GetJobsAsync(pageNumber);
                     if (jobs == null || jobs.Count == 0)
                         break;
