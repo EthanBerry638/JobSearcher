@@ -16,11 +16,11 @@ namespace JobFetcherManager
         private readonly HttpClient _httpClient = new HttpClient();
         private const string AppId = "8e952900";
         private const string AppKey = "a8531e4972606137d931f6222e1a4392";
-        private const int ResultsPerPage = 50;
+        private const int ResultsPerPage = 10;
 
         public async Task<List<JobListing>> GetJobsAsync(int pageNumber = 1)
         {
-            string url = $"https://api.adzuna.com/v1/api/jobs/gb/search/{pageNumber}?app_id={AppId}&app_key={AppKey}&results_per_page=5&what=apprentice&where=Leeds";
+            string url = $"https://api.adzuna.com/v1/api/jobs/gb/search/{pageNumber}?app_id={AppId}&app_key={AppKey}&results_per_page={ResultsPerPage}&what=apprentice&where=Leeds";
 
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)

@@ -11,9 +11,9 @@ namespace Helpers
                 .Where(job =>
                     !string.IsNullOrWhiteSpace(job.Title) &&
                     !job.Title.ToLowerInvariant().Contains("senior") &&
-                    !job.Description!.ToLowerInvariant().Contains("remote") &&
-                    !job.Location!.ToLowerInvariant().Contains("remote"))
-                .ToList();
+                    !job.Title.ToLowerInvariant().Contains("remote") && 
+                    !job.Title.ToLowerInvariant().Contains("manager")
+                ).ToList();
         }
         public static bool IsRelevant(string title, string description)
         {
