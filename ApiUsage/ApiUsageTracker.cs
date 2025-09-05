@@ -1,4 +1,6 @@
+using System.Security.Cryptography;
 using System.Text.Json;
+using Helpers;
 
 namespace ApiUsage
 {
@@ -10,29 +12,28 @@ namespace ApiUsage
         {
             provider = provider.Trim().ToLowerInvariant();
             endpoint = endpoint.Trim().ToLowerInvariant();
+            var today = DateTime.Now.ToString("yyyy-MM-dd");
+
             var usage = LoadUsage();
 
-            if (!usage.ContainsKey(provider))
-                usage[provider] = new Dictionary<string, int>();
+            if (!usage.ContainsKey(today))
+                usage[today] = new Dictionary<string, Dictionary<string, int>>();
 
-            if (!usage[provider].ContainsKey(endpoint))
-                usage[provider][endpoint] = 0;
+            if (!usage[today].ContainsKey(provider))
+                usage[today][provider] = new Dictionary<string, int>();
 
-            usage[provider][endpoint]++;
-            /* Console.WriteLine($"🔍 Incrementing {provider} → {endpoint}");
-            foreach (var kvp in usage)
-            {
-                Console.WriteLine($"Provider: {kvp.Key}");
-                foreach (var ep in kvp.Value)
-                {
-                    Console.WriteLine($"  {ep.Key}: {ep.Value}");
-                }
-            } */
-            Console.WriteLine($"✅ Usage tracked: {provider} → {endpoint}");
+            if (!usage[today][provider].ContainsKey(endpoint))
+                usage[today][provider][endpoint] = 0;
+
+            usage[today][provider][endpoint]++;
+            Console.WriteLine($"✅ Usage tracked: {provider} → {endpoint} on {today}");
             SaveUsage(usage);
+            int count = GetTodayCount("adzuna");
+            Console.WriteLine($"\n📅 Requests made today to Adzuna: {count}");
+            Helper.Pause(1000);
         }
 
-        private static Dictionary<string, Dictionary<string, int>> LoadUsage()
+        private static Dictionary<string, Dictionary<string, Dictionary<string, int>>> LoadUsage()
         {
             if (!File.Exists(FilePath))
             {
@@ -43,7 +44,8 @@ namespace ApiUsage
             try
             {
                 var json = File.ReadAllText(FilePath);
-                return JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, int>>>(json) ?? new();
+                return JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Dictionary<string, int>>>>(json)
+                       ?? new();
             }
             catch (Exception ex)
             {
@@ -52,7 +54,7 @@ namespace ApiUsage
             }
         }
 
-        private static void SaveUsage(Dictionary<string, Dictionary<string, int>> usage)
+        private static void SaveUsage(Dictionary<string, Dictionary<string, Dictionary<string, int>>> usage)
         {
             try
             {
@@ -67,6 +69,29 @@ namespace ApiUsage
             {
                 Console.WriteLine($"❌ Save failed: {ex}");
             }
+        }
+
+        public static int GetTodayCount(string provider)
+        {
+            provider = provider.Trim().ToLowerInvariant();
+            var today = DateTime.Now.ToString("yyyy-MM-dd");
+            var usage = LoadUsage();
+
+            if (usage.ContainsKey(today) && usage[today].ContainsKey(provider))
+                return usage[today][provider].Values.Sum();
+
+            return 0;
+        }
+
+        public static int GetCountForDate(string provider, string date)
+        {
+            provider = provider.Trim().ToLowerInvariant();
+            var usage = LoadUsage();
+
+            if (usage.ContainsKey(date) && usage[date].ContainsKey(provider))
+                return usage[date][provider].Values.Sum();
+
+            return 0;
         }
     }
 }
