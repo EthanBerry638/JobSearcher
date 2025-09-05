@@ -24,7 +24,7 @@ namespace JobFetcherManager
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Failed to fetch jobs: {response.StatusCode}");
+                Console.WriteLine($"Failed to fetch adzuna jobs, error: {response.StatusCode}");
                 return new List<JobListing>();
             }
 
@@ -84,12 +84,13 @@ namespace JobFetcherManager
 
         public async Task<List<JobListing>> GetJobsAsync(int pageNumber = 1)
         {
-            string url = "https://remotive.io/api/remote-jobs";
+            string url = "https://remotive.io/api/remote-jobs?search=apprentice";
 
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("JobFetcherManager/1.0");
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Tried to fetch jobs: {response.StatusCode}");
+                Console.WriteLine($"Tried to fetch remotive jobs, error: {response.StatusCode}");
                 return new List<JobListing>();
             }
 
