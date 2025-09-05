@@ -76,4 +76,44 @@ namespace JobFetcherManager
 
         }
     }
+
+    public class RemotiveJobProvider : IJobProvider
+    {
+        private readonly HttpClient _httpClient = new HttpClient();
+
+        public async Task<List<JobListing>> GetJobsAsync(int pageNumber = 1)
+        {
+            string url = "https://remotive.io/api/remote-jobs";
+
+            var response = await _httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Tried to fetch jobs: {response.StatusCode}");
+                return new List<JobListing>();
+            }
+
+            try
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var parsed = JsonSerializer.Deserialize<RemotiveResponse>(json);
+
+                var jobs = parsed?.Jobs?.Select(job => new JobListing
+                {
+                    Title = job.Title,
+                    Company = job.CompanyName ?? "Unknown",
+                    Location = job.CandidateRequiredLocation ?? "Unknown",
+                    Description = job.Description,
+                    Url = job.Url,
+                    PostedDate = DateTime.TryParse(job.PublicationDate, out var date) ? date : DateTime.MinValue
+                }).ToList() ?? new List<JobListing>();
+
+                return jobs;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Deserialization error: {ex.Message}");
+                return new List<JobListing>();
+            }
+        }
+    }
 }
