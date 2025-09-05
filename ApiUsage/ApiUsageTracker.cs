@@ -26,7 +26,7 @@ namespace ApiUsage
                 usage[today][provider][endpoint] = 0;
 
             usage[today][provider][endpoint]++;
-            Console.WriteLine($"✅ Usage tracked: {provider} → {endpoint} on {today}");
+            Console.WriteLine($"\n✅ Usage tracked: {provider} → {endpoint} on {today}");
             SaveUsage(usage);
             int count = GetTodayCount("adzuna");
             Console.WriteLine($"\n📅 Requests made today to Adzuna: {count}");

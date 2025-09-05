@@ -16,10 +16,10 @@ namespace Menus
         public async Task LoopAsync()
         {
             Console.Clear();
-            Console.WriteLine("Fetching jobs...\n");
+            Console.WriteLine("Fetching jobs...");
             Helper.Pause(1000);
 
-            int maxPages = 10;
+            int maxPages = 5;
 
             foreach (var provider in _providers)
             {

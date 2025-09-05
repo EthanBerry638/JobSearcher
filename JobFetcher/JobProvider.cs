@@ -29,26 +29,26 @@ namespace JobFetcherManager
             }
 
             var bytes = await response.Content.ReadAsByteArrayAsync();
+
             var charset = response.Content.Headers.ContentType?.CharSet?.ToLowerInvariant();
-
-            if (charset == "utf8") charset = "utf-8";
-
-            Encoding encoding;
-            try
+            charset = charset switch
             {
-                encoding = Encoding.GetEncoding(charset ?? "utf-8");
-            }
-            catch
-            {
-                Console.WriteLine($"Unsupported charset '{charset}', falling back to UTF-8.");
-                encoding = Encoding.UTF8;
-            }
+                "utf8" => "utf-8",
+                null => "utf-8",
+                _ => charset
+            };
 
-            var content = encoding.GetString(bytes);
+
+            Encoding encoding = Encoding.GetEncoding(charset);
+
+            string decoded = string.Empty;
 
             try
             {
-                var parsed = JsonSerializer.Deserialize<AdzunaResponse>(content);
+                var content = await response.Content.ReadAsByteArrayAsync();
+                decoded = encoding.GetString(content);
+
+                var parsed = JsonSerializer.Deserialize<AdzunaResponse>(decoded);
 
                 var jobs = parsed?.Results?.Select(job => new JobListing
                 {
@@ -71,10 +71,9 @@ namespace JobFetcherManager
             catch (Exception ex)
             {
                 Console.WriteLine($"Deserialization error: {ex.Message}");
-                Console.WriteLine(content);
+                Console.WriteLine(decoded.Length > 500 ? decoded.Substring(0, 500) + "..." : decoded); 
                 return new List<JobListing>();
             }
-
         }
     }
 
@@ -109,6 +108,11 @@ namespace JobFetcherManager
                     PostedDate = DateTime.TryParse(job.PublicationDate, out var date) ? date : DateTime.MinValue,
                     Source = "Remotive"
                 }).ToList() ?? new List<JobListing>();
+
+                if (jobs.Count > 0)
+                {
+                    ApiUsageTracker.Increment("remotive", "searchjobs");
+                }
 
                 return jobs;
             }
